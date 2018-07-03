@@ -8,6 +8,7 @@ from __future__ import print_function
 
 import uuid, threading, time
 from datetime import datetime, timedelta
+from six import string_types
 from six.moves.xmlrpc_server import SimpleXMLRPCServer
 
 
@@ -34,19 +35,9 @@ class xenapi(object):
         def __init__(self):
             """Inits common XenAPI class atributes."""
             self.objs = {}
+            self.all_fields = []
             self.rw_fields = []
-
-        def _check_obj_ref(self, obj_ref):
-            """Checks if object reference is valid/exists.
-
-            Args:
-                obj_ref (str): XenAPI object reference to check.
-
-            Raises:
-                xenapi.xapi_exception: If object reference is invalid.
-            """
-            if not obj_ref in self.objs:
-                raise xenapi.xapi_exception(['HANDLE_INVALID', self.__class__.__name__, obj_ref])
+            self.map_fields = []
 
         def __getattr__(self, method_name):
             """Returns generic getters and setters for XenAPI class fields.
@@ -70,22 +61,11 @@ class xenapi(object):
 
                 Returns:
                     varying type: XenAPI object field value.
-
-                Raises:
-                    xenapi.xapi_exception: If unknown field is referenced i.e.
-                    non existant getter method is called.
                 """
                 self._check_obj_ref(obj_ref)
 
-                # Strip "get_" from method name to extract field name.
                 field_name = method_name[4:]
-
-                obj = self.objs[obj_ref]
-
-                if field_name in obj:
-                    return self.objs[obj_ref][field_name]
-                else:
-                    raise xenapi.xapi_exception(['MESSAGE_METHOD_UNKNOWN', "%s.%s" % (self.__class__.__name__, method_name)])
+                return self.objs[obj_ref][field_name]
 
             def setter(obj_ref, value):
                 """Generic XenAPI object setter method.
@@ -93,45 +73,100 @@ class xenapi(object):
                 Args:
                     obj_ref (str): XenAPI object reference to call setter
                         method on.
-                    value(varying type): Value of XenAPI object field to set to.
+                    value (varying type): Value of XenAPI object field to
+                        set to.
 
                 Raises:
-                    xenapi.xapi_exception: If field is read only, if unknown
-                    field is referenced i.e. nonexistant setter method is called
-                    or value type differs from field type.
+                    xenapi.xapi_exception: If value type differs from field
+                    type.
                 """
                 self._check_obj_ref(obj_ref)
 
-                # Strip "set_" from method name to extract field name.
+                obj = self.objs[obj_ref]
                 field_name = method_name[4:]
 
-                obj = self.objs[obj_ref]
-
-                if field_name in self.rw_fields and field_name in obj:
-                    if type(self.objs[obj_ref][field_name]) == type(value):
-                        self.objs[obj_ref][field_name] = value
-                    else:
-                        raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'value'])
+                if type(obj[field_name]) == type(value):
+                    self.objs[obj_ref][field_name] = value
                 else:
-                    raise xenapi.xapi_exception(['MESSAGE_METHOD_UNKNOWN', "%s.%s" % (self.__class__.__name__, method_name)])
+                    raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'value'])
 
-            if method_name.startswith("get_"):
+            def adder(obj_ref, key, value):
+                """Generic XenAPI object map field adder method.
+
+                Adds key and value to map type fields.
+
+                Args:
+                    key (str): Key to add.
+                    value (str) Value to add.
+
+                Raises:
+                    xenapi.xapi_exception: If key or value is not string or if
+                    key already exists in map type field.
+                """
+                if not isinstance(key, string_types):
+                    raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'key'])
+
+                if not isinstance(value, string_types):
+                    raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'value'])
+
+                self._check_obj_ref(obj_ref)
+
+                obj = self.objs[obj_ref]
+                field_name = method_name[7:]
+
+                if key in obj[field_name]:
+                    raise xenapi.xapi_exception(['MAP_DUPLICATE_KEY', self.__class__.__name__, field_name, obj_ref, key])
+
+                obj[field_name][key] = value
+
+            def remover(obj_ref, key):
+                """Generic XenAPI object map field remover method.
+
+                Removes key and associated value from map type fields.
+
+                Args:
+                    key (str): Key to remove.
+
+                Raises:
+                    xenapi.xapi_exception: If key or value is not string.
+                """
+                if not isinstance(key, string_types):
+                    raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'key'])
+
+                self._check_obj_ref(obj_ref)
+
+                obj = self.objs[obj_ref]
+                field_name = method_name[12:]
+
+                if key in obj[field_name]:
+                    del obj[field_name][key]
+
+            if method_name.startswith("get_") and method_name[4:] in self.all_fields:
                 return getter
-            elif method_name.startswith("set_"):
+            elif method_name.startswith("set_") and method_name[4:] in self.rw_fields:
                 return setter
+            elif method_name.startswith("add_to_") and method_name[7:] in self.map_fields:
+                return adder
+            elif method_name.startswith("remove_from_") and method_name[12:] in self.map_fields:
+                return remover
             else:
                 raise xenapi.xapi_exception(['MESSAGE_METHOD_UNKNOWN', "%s.%s" % (self.__class__.__name__, method_name)])
 
-        def get_all(self):
-            """Gets all object references of the class.
+        #
+        # Common utility methods
+        #
 
-            This method is not present in all XenAPI classes. It is implemented
-            here in all classes for easier testing.
+        def _check_obj_ref(self, obj_ref):
+            """Checks if object reference is valid/exists.
 
-            Returns:
-                list: List of all object references of given XenAPI class.
+            Args:
+                obj_ref (str): XenAPI object reference to check.
+
+            Raises:
+                xenapi.xapi_exception: If object reference is invalid.
             """
-            return self.objs.keys()
+            if not obj_ref in self.objs:
+                raise xenapi.xapi_exception(['HANDLE_INVALID', self.__class__.__name__, obj_ref])
 
         def echo(self, string):
             """Echoes string back. Used for testing purposes.
@@ -140,6 +175,35 @@ class xenapi(object):
                 string (str): String to echo back.
             """
             return string
+
+        #
+        # Common XenAPI methods
+        #
+
+        def get_all(self):
+            """
+            This method is not present in all XenAPI classes. It is implemented
+            here in all classes for easier testing.
+            """
+            return self.objs.keys()
+
+        def get_by_uuid(self, uuid):
+            obj_ref_found = None
+
+            for obj_ref in self.objs:
+                if self.objs[obj_ref]['uuid'] == uuid:
+                    obj_ref_found = obj_ref
+                    break
+
+            if obj_ref_found is not None:
+                return obj_ref_found
+            else:
+                raise xenapi.xapi_exception(['UUID_INVALID', self.__class__.__name__, uuid])
+
+        def get_record(self, obj_ref):
+            self._check_obj_ref(obj_ref)
+
+            return self.objs[obj_ref]
 
 
     class session(xapi_object):
@@ -162,10 +226,86 @@ class xenapi(object):
             self.root_pwd = root_pwd
             self.this_host = this_host
 
-            self.rw_fields.extend(["other_config"])
+            self.all_fields.extend([
+                    "auth_user_name",
+                    "auth_user_sid",
+                    "is_local_superuser",
+                    "last_active",
+                    "originator",
+                    "other_config",
+                    "parent",
+                    "pool",
+                    "rbac_permissions",
+                    "subject",
+                    "tasks",
+                    "this_host",
+                    "this_user",
+                    "uuid",
+                    "validation_time",
+            ])
+            self.rw_fields.extend([
+                "other_config"
+            ])
+            self.map_fields.extend([
+                "other_config"
+            ])
+
+        #
+        # Utility methods
+        #
+
+        def _expire_old_sessions(self):
+            """Expires sessions older than 24h."""
+            for session_ref in self.objs.keys():
+                session_last_active = self.objs[session_ref].get('last_active')
+
+                if session_last_active and isinstance(session_last_active, datetime):
+                    session_time_active = datetime.now() - session_last_active
+
+                    if session_time_active.days >= 1:
+                        del self.objs[session_ref]
+
+        def _update_last_active(self, session_ref):
+            """Updates last_active field of session to current time.
+
+            Args:
+                session_ref (str): Session reference.
+            """
+            current_session = self.objs.get(session_ref)
+
+            if current_session:
+                current_session["last_active"] = datetime.utcnow()
+
+        #
+        # XenAPI methods
+        #
+
+        def change_password(self, old_pwd, new_pwd):
+            # old_pwd is just ignored because root account is always used.
+
+            if not new_pwd:
+                raise xenapi.xapi_exception(['CHANGE_PASSWORD_REJECTED', 'Authentication information cannot be recovered'])
+
+            self.root_pwd = new_pwd
+
+        def create_from_db_file(self, filename):
+            # I don't really know what this method does. It's not well
+            # documentented. I implemented this as a dummy that returns first
+            # session found.
+            if self.objs:
+                return self.objs.keys()[0]
+
+        def get_all_subject_identifiers(self):
+            # We don't support external authentication so we just return an
+            # empty string here.
+            return []
+
+        def local_logout(self, session_ref):
+            # We just pass this to session.logout().
+            self.logout(session_ref)
 
         def login_with_password(self, user_name, user_pwd, version="1.0", originator=""):
-            # Authenticate user.
+            # Check user name and password.
             if user_name != "root" or user_pwd != self.root_pwd:
                 raise xenapi.xapi_exception(['SESSION_AUTHENTICATION_FAILED'])
 
@@ -196,27 +336,12 @@ class xenapi(object):
 
             return session_ref
 
-        def expire_old_sessions(self):
-            """Expires sessions older than 24h."""
-            for session_ref in self.objs.keys():
-                session_last_active = self.objs[session_ref].get('last_active')
+        def logout(self, session_ref):
+            del self.objs[session_ref]
 
-                if session_last_active and isinstance(session_last_active, datetime):
-                    session_time_active = datetime.now() - session_last_active
-
-                    if session_time_active.days >= 1:
-                        del self.objs[session_ref]
-
-        def update_last_active(self, session_ref):
-            """Updates last_active field of session to current time.
-
-            Args:
-                session_ref (str): Session reference.
-            """
-            current_session = self.objs.get(session_ref)
-
-            if current_session:
-                current_session["last_active"] = datetime.utcnow()
+        def slave_local_login_with_password(self, user_name, user_pwd):
+            # We just pass this to session.login_with_password().
+            return self.login_with_password(user_name, user_pwd)
 
 
     class xapi_exception(Exception):
@@ -254,12 +379,12 @@ class xenapi(object):
         def run(self):
             """Overriden Thread.run() method.
 
-            Calls xenapi.sessions.expire_old_sessions() every 5 minutes to
+            Calls xenapi.sessions._expire_old_sessions() every 5 minutes to
             expire old sessions.
             """
             while True:
                 if self.sessions:
-                    self.sessions.expire_old_sessions()
+                    self.sessions._expire_old_sessions()
 
                 time.sleep(300)
 
@@ -268,14 +393,14 @@ class xenapi(object):
         """Inits all XenAPI classes."""
 
         # Set our root user password.
-        self.root_pwd = "xenserver"
+        root_pwd = "xenserver"
 
         # Generate this host reference.
-        self.this_host = "OpaqueRef:%s" % str(uuid.uuid4())
+        this_host = "OpaqueRef:%s" % str(uuid.uuid4())
 
         # Create all our objects that represent XenAPI classes.
         self.classes = {
-            "session": self.session(self.root_pwd, self.this_host)
+            "session": self.session(root_pwd, this_host)
         }
 
         # Create and run thread that expires sessions.
@@ -316,26 +441,37 @@ class xenapi(object):
 
             # All methods except generic getter and setter methods have implicit
             # argument 'self' so real number of arguments is one less.
-            if method_name_split[1] == "get_all" or not method_name_split[1].startswith("get_") and not method_name_split[1].startswith("set_"):
+            if (not method_name_split[1].startswith("get_") and
+                not method_name_split[1].startswith("set_") and
+                not method_name_split[1].startswith("add_to_") and
+                not method_name_split[1].startswith("remove_from_") or
+                method_name_split[1] in ["get_all", "get_all_subject_identifiers", "get_by_uuid", "get_record"]):
                 method_argcount -= 1
 
             # All methods except login methods have implicit session ref
             # parameter so real number of parameters is one less.
-            if not method_name_split[1].startswith("login_") and not method_name_split[1].startswith("slave_local_login_"):
+            if (not method_name_split[1].startswith("login_") and
+                    not method_name_split[1].startswith("slave_local_login_") and
+                    not method_name_split[1] in ["logout", "local_logout"]):
                 method_paramcount -= 1
 
             # If number of method arguments and parameters differ, raise
             # XenAPI exception with appropriate error message.
             if method_argcount != method_paramcount:
-                raise xenapi.xapi_exception(['MESSAGE_PARAMETER_COUNT_MISMATCH', str(method_argcount), str(method_paramcount)])
+                raise xenapi.xapi_exception(['MESSAGE_PARAMETER_COUNT_MISMATCH', method_name, str(method_argcount), str(method_paramcount)])
 
-            # Check if session is valid and strip session reference from params.
+            # Check if session is valid.
             if not method_name_split[1].startswith("login_") and not method_name_split[1].startswith("slave_local_login_"):
                 if len(params) > 0 and not params[0] in self.classes["session"].objs:
                     raise xenapi.xapi_exception(['SESSION_INVALID', params[0]])
 
-                self.classes["session"].update_last_active(params[0])
-                params = params[1:]
+                # Update current session last_active field.
+                self.classes["session"]._update_last_active(params[0])
+
+                # Strip session from input params if method is not
+                # session.logout() of session.local_logout().
+                if not method_name_split[1] in ["logout", "local_logout"]:
+                    params = params[1:]
 
             # Call method.
             value = method(*params)
