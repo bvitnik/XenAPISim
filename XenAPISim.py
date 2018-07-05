@@ -35,10 +35,17 @@ class xenapi(object):
         def __init__(self):
             """Inits common XenAPI class atributes."""
             self.objs = {}
-            self.field_def = {}
-            self.rw_fields = []
+            self.field_def = {
+                "other_config": {},
+                "uuid": "",
+            }
+            self.rw_fields = [
+                "other_config"
+            ]
             self.list_fields = []
-            self.map_fields = []
+            self.map_fields = [
+                "other_config"
+            ]
 
         def __getattr__(self, method_name):
             """Returns generic getters and setters for XenAPI class fields.
@@ -329,7 +336,6 @@ class xenapi(object):
                 "is_local_superuser": False,
                 "last_active": datetime.now(),
                 "originator": "",
-                "other_config": {},
                 "parent": "OpaqueRef:NULL",
                 "pool": False,
                 "rbac_permissions": [],
@@ -337,17 +343,8 @@ class xenapi(object):
                 "tasks": [],
                 "this_host": "OpaqueRef:NULL",
                 "this_user": "OpaqueRef:NULL",
-                "uuid": "",
                 "validation_time": datetime.now(),
             })
-
-            self.rw_fields.extend([
-                "other_config"
-            ])
-
-            self.map_fields.extend([
-                "other_config"
-            ])
 
         #
         # Utility methods
@@ -521,7 +518,6 @@ class xenapi(object):
                 "multipathing": False,
                 "name_description": "",
                 "name_label": "",
-                "other_config": {},
                 "patches": [],
                 "power_on_config": {},
                 "power_on_mode": "",
@@ -534,7 +530,6 @@ class xenapi(object):
                 "tags": [],
                 "updates": [],
                 "updates_requiring_reboot": [],
-                "uuid": "",
                 "virtual_hardware_platform_versions": [],
             })
 
@@ -548,7 +543,6 @@ class xenapi(object):
                 "logging",
                 "name_description",
                 "name_label",
-                "other_config",
                 "suspend_image_sr",
                 "tags",
             ])
@@ -561,7 +555,6 @@ class xenapi(object):
                 "guest_VCPUs_params",
                 "license_server",
                 "logging",
-                "other_config",
             ])
 
             host_new = {
@@ -905,6 +898,761 @@ class xenapi(object):
 
             return {}
 
+        def has_extension(self, host_ref, name):
+            self._check_obj_ref_type(host_ref)
+
+            if not isinstance(name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'name'])
+
+            self._check_obj_ref(host_ref)
+
+            return False
+
+        def license_add(self, host_ref, contents):
+            self._check_obj_ref_type(host_ref)
+
+            if not isinstance(contents, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'contents'])
+
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def license_remove(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def list_methods(self):
+            raise xenapi.xapi_exception(['NOT_IMPLEMENTED', 'list_methods'])
+
+        def local_management_reconfigure(self, interface):
+            if not isinstance(interface, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'interface'])
+
+            # do nothing
+
+        def management_disable(self):
+            # do nothing
+            pass
+
+        def management_reconfigure(self, pif_ref):
+            # PIF._check_obj_ref_type(pif_ref)
+            # PIF._check_obj_ref(pif_ref)
+            pass
+
+        def migrate_receive(self, host_ref, network_ref, options):
+            self._check_obj_ref_type(host_ref)
+            # network._check_obj_ref_type(network_ref)
+
+            if not isinstance(options, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'options'])
+
+            self._check_obj_ref(host_ref)
+            # network._check_obj_ref(network_ref)
+
+            return {}
+
+        def power_on(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def query_data_source(self, host_ref, data_source):
+            self._check_obj_ref_type(host_ref)
+
+            if not isinstance(data_source, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'data_source'])
+
+            self._check_obj_ref(host_ref)
+
+            return "0.0"
+
+        def reboot(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def record_data_source(self, host_ref, data_source):
+            self._check_obj_ref_type(host_ref)
+
+            if not isinstance(data_source, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'data_source'])
+
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def refresh_pack_info(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def reset_cpu_features(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def restart_agent(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            time.sleep(10)
+
+        def retrieve_wlb_evacuate_recommendations(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            return {}
+
+        def send_debug_keys(self, host_ref, keys):
+            self._check_obj_ref_type(host_ref)
+
+            if not isinstance(keys, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'keys'])
+
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def set_cpu_features(self, host_ref, features):
+            self._check_obj_ref_type(host_ref)
+
+            if not isinstance(features, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'features'])
+
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def set_hostname_live(self, host_ref, hostname):
+            self.set_hostname(host_ref, hostname)
+
+        def set_power_on_mode(self, host_ref, power_on_mode, power_on_config):
+            self._check_obj_ref_type(host_ref)
+
+            if not isinstance(power_on_mode, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'power_on_mode'])
+
+            if not isinstance(power_on_config, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'power_on_config'])
+
+            self._check_obj_ref(host_ref)
+
+            self.objs[host_ref]['power_on_mode'] = power_on_mode
+            self.objs[host_ref]['power_on_config'] = power_on_config
+
+        def shutdown(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def shutdown_agent(self):
+            time.sleep(10)
+
+        def sync_data(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+        def syslog_reconfigure(self, host_ref):
+            self._check_obj_ref_type(host_ref)
+            self._check_obj_ref(host_ref)
+
+            # do nothing
+
+
+    class host_cpu(xapi_object):
+        """XenAPI host_cpu class.
+
+        Attributes:
+        """
+
+        def __init__(self, host_ref):
+            """Inits host_cpu class.
+
+            Args:
+            """
+            super(xenapi.host_cpu, self).__init__()
+
+            self.field_def.update({
+                "family": "",
+                "features": "",
+                "flags": "",
+                "host": "OpaqueRef:NULL",
+                "model": "",
+                "modelname": "",
+                "number": "",
+                "speed": "",
+                "stepping": "",
+                "utilisation": "",
+                "vendor": "",
+            })
+
+            host_cpu_new = {
+                "family": "0",
+                "features": "",
+                "flags": "",
+                "host": host_ref,
+                "model": "0",
+                "modelname": "",
+                "number": "0",
+                "other_config": {},
+                "speed": "0",
+                "stepping": "",
+                "uuid": str(uuid.uuid4()),
+                "utilisation": "0.0",
+                "vendor": "",
+            }
+
+            host_cpu_ref = "OpaqueRef:%s" % str(uuid.uuid4())
+
+            self.objs[host_cpu_ref] = host_cpu_new
+
+
+    class host_metrics(xapi_object):
+        """XenAPI host_metrics class.
+
+        Attributes:
+        """
+
+        def __init__(self):
+            """Inits host_metrics class.
+
+            Args:
+            """
+            super(xenapi.host_metrics, self).__init__()
+
+            self.field_def.update({
+                "last_updated": datetime.now(),
+                "live": True,
+                "memory_free": "0",
+                "memory_total": "0",
+            })
+
+            host_metrics_new = {
+                "last_updated": datetime.now(),
+                "live": True,
+                "memory_free": "0",
+                "memory_total": "0",
+                "other_config": {},
+                "uuid": str(uuid.uuid4()),
+            }
+
+            host_metrics_ref = "OpaqueRef:%s" % str(uuid.uuid4())
+
+            self.objs[host_metrics_ref] = host_metrics_new
+
+
+    class pool(xapi_object):
+        """XenAPI pool class.
+
+        Attributes:
+        """
+
+        def __init__(self, host_ref):
+            """Inits pool class.
+
+            Args:
+            """
+            super(xenapi.pool, self).__init__()
+
+            self.field_def.update({
+                "allowed_operations": [],
+                "blobs": {},
+                "cpu_info": {},
+                "crash_dump_SR": "OpaqueRef:NULL",
+                "current_operations": {},
+                "default_SR": "OpaqueRef:NULL",
+                "guest_agent_config": {},
+                "gui_config": {},
+                "ha_allow_overcommit": False,
+                "ha_cluster_stack": "",
+                "ha_configuration": {},
+                "ha_enabled": False,
+                "ha_host_failures_to_tolerate": "0",
+                "ha_overcommitted": False,
+                "ha_plan_exists_for": "0",
+                "ha_statefiles": [],
+                "health_check_config": {},
+                "igmp_snooping_enabled": False,
+                "live_patching_disabled": False,
+                "master": "OpaqueRef:NULL",
+                "metadata_VDIs": [],
+                "name_description": "",
+                "name_label": "",
+                "policy_no_vendor_device": False,
+                "redo_log_enabled": False,
+                "redo_log_vdi": "OpaqueRef:NULL",
+                "restrictions": {},
+                "suspend_image_SR": "OpaqueRef:NULL",
+                "tags": [],
+                "vswitch_controller": "",
+                "wlb_enabled": False,
+                "wlb_url": "",
+                "wlb_username": "",
+                "wlb_verify_cert": False,
+            })
+
+            self.rw_fields.extend([
+                "crash_dump_sr",
+                "default_SR",
+                "gui_config",
+                "ha_allow_overcommit",
+                "health_check_config",
+                "live_patching_disabled",
+                "name_description",
+                "name_label",
+                "policy_no_vendor_device",
+                "suspend_image_SR",
+                "tags",
+                "wlb_enabled",
+                "wlb_verify_cert"
+            ])
+
+            self.list_fields.extend([
+                "tags",
+            ])
+
+            self.map_fields.extend([
+                "guest_agent_config",
+                "gui_config",
+                "health_check_config",
+            ])
+
+            pool_new = {
+                "allowed_operations": ['ha_enable'],
+                "blobs": {},
+                "cpu_info": {},
+                "crash_dump_SR": "OpaqueRef:NULL",
+                "current_operations": {},
+                "default_SR": "OpaqueRef:NULL",
+                "guest_agent_config": {},
+                "gui_config": {},
+                "ha_allow_overcommit": False,
+                "ha_cluster_stack": "xhad",
+                "ha_configuration": {},
+                "ha_enabled": False,
+                "ha_host_failures_to_tolerate": "0",
+                "ha_overcommitted": False,
+                "ha_plan_exists_for": "0",
+                "ha_statefiles": [],
+                "health_check_config": {},
+                "igmp_snooping_enabled": False,
+                "live_patching_disabled": False,
+                "master": host_ref,
+                "metadata_VDIs": [],
+                "name_description": "",
+                "name_label": "xenserver-pool",
+                "other_config": {},
+                "policy_no_vendor_device": False,
+                "redo_log_enabled": False,
+                "redo_log_vdi": "OpaqueRef:NULL",
+                "restrictions": {},
+                "suspend_image_SR": "OpaqueRef:NULL",
+                "tags": [],
+                "uuid": str(uuid.uuid4()),
+                "vswitch_controller": "",
+                "wlb_enabled": False,
+                "wlb_url": "",
+                "wlb_username": "",
+                "wlb_verify_cert": False,
+            }
+
+            pool_ref = "OpaqueRef:%s" % str(uuid.uuid4())
+
+            self.objs[pool_ref] = pool_new
+
+        def apply_edition(self, pool_ref, edition):
+            self._check_obj_ref_type(pool_ref)
+
+            if not isinstance(edition, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'edition'])
+
+            if edition.lower() not in ['free', 'enterprise-per-socket', 'enterprise-per-user', 'standard-per-socket', 'desktop', 'desktop-plus']:
+                raise xenapi.xapi_exception(['INVALID_EDITION', edition.lower()])
+
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.apply_edition(host_ref, edition, False)
+
+        def certificate_install(self, pool_ref, name, cert):
+            self._check_obj_ref_type(pool_ref)
+
+            if not isinstance(name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'name'])
+
+            if not isinstance(cert, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'cert'])
+
+            self._check_obj_ref(pool_ref)
+
+            # do nothing
+
+        def certificate_list(self):
+            return []
+
+        def certificate_sync(self):
+            # do nothing
+            pass
+
+        def certificate_uninstall(self, name):
+            if not isinstance(name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'name'])
+
+            # do nothing
+
+        def create_VLAN(self, device, network_ref, VLAN):
+            if not isinstance(device, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'device'])
+
+            # network._check_obj_ref_type(network_ref)
+
+            if not isinstance(VLAN, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'VLAN'])
+
+            # network._check_obj_ref(network_ref)
+
+            if not VLAN.isdigit() or int(VLAN) > 4094:
+                raise xenapi.xapi_exception(['VLAN_TAG_INVALID', 'VLAN'])
+
+            # do nothing
+
+        def create_VLAN_from_PIF(self, device, pif_ref, network_ref, VLAN):
+            if not isinstance(device, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'device'])
+
+            # PIF._check_obj_ref_type(network_ref)
+            # network._check_obj_ref_type(network_ref)
+
+            if not isinstance(VLAN, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'VLAN'])
+
+            # PIF._check_obj_ref(network_ref)
+            # network._check_obj_ref(network_ref)
+
+            if not VLAN.isdigit() or int(VLAN) > 4094:
+                raise xenapi.xapi_exception(['VLAN_TAG_INVALID', 'VLAN'])
+
+            # do nothing
+
+        def create_new_blob(self, pool_ref, name, mime_type, public):
+            self._check_obj_ref_type(pool_ref)
+
+            if not isinstance(name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'name'])
+
+            if not isinstance(mime_type, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'mime_type'])
+
+            if not isinstance(public, bool):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'public'])
+
+            self._check_obj_ref(pool_ref)
+
+            return "OpaqueRef:NULL"
+
+        def crl_install(self, name, cert):
+            if not isinstance(name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'name'])
+
+            if not isinstance(cert, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'cert'])
+
+            # do nothing
+
+        def crl_list(self):
+            return []
+
+        def crl_uninstall(self, name):
+            if not isinstance(name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'name'])
+
+            # do nothing
+
+        def deconfigure_wlb(self):
+            pool_ref = self.objs.keys()[0]
+            self.objs[pool_ref]['wlb_enabled'] = False
+            self.objs[pool_ref]['wlb_url'] = ""
+            self.objs[pool_ref]['wlb_username'] = ""
+            self.objs[pool_ref]['wlb_verify_cert'] = False
+
+        def designate_new_master(self, host_ref):
+            # host._check_obj_ref_type(network_ref)
+            # host._check_obj_ref(network_ref)
+
+            pool_ref = self.objs.keys()[0]
+            self.objs[pool_ref]['master'] = host_ref
+
+        def detect_nonhomogeneous_external_auth(self, pool_ref):
+            # do nothing
+            pass
+
+        def disable_external_auth(self, pool_ref, config):
+            self._check_obj_ref_type(pool_ref)
+
+            if not isinstance(config, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'config'])
+
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.disable_external_auth(host_ref, config)
+
+        def disable_ha(self):
+            pool_ref = self.objs.keys()[0]
+            self.objs[pool_ref]['ha_enabled'] = False
+
+        def disable_local_storage_caching(self, pool_ref):
+            self._check_obj_ref_type(pool_ref)
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.disable_local_storage_caching(host_ref)
+
+        def disable_redo_log(self):
+            pool_ref = self.objs.keys()[0]
+            self.objs[pool_ref]['redo_log_enabled'] = False
+
+        def disable_ssl_legacy(self, pool_ref):
+            self._check_obj_ref_type(pool_ref)
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.set_ssl_legacy(host_ref, False)
+
+        def eject(self, host_ref):
+            # host._check_obj_ref_type(network_ref)
+            # host._check_obj_ref(network_ref)
+
+            # del host.objs[host_ref]
+            pass
+
+        def emergency_reset_master(self, master_address):
+            if not isinstance(master_address, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'master_address'])
+
+            # do nothing
+
+        def emergency_transition_to_master(self):
+            # do nothing
+            pass
+
+        def enable_external_auth(self, pool_ref, config, service_name, auth_type):
+            self._check_obj_ref_type(pool_ref)
+
+            if not isinstance(config, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'config'])
+
+            if not isinstance(service_name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'service_name'])
+
+            if not isinstance(auth_type, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'auth_type'])
+
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.enable_external_auth(host_ref, config, service_name, auth_type)
+
+        def enable_ha(self, sr_ref_list, configuration):
+            if not isinstance(sr_ref_list, list):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'sr_ref_list'])
+
+            if not isinstance(configuration, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'configuration'])
+
+            # for sr_ref in sr_ref_list:
+            #     SR._check_obj_ref_type(sr_ref)
+
+            # for sr_ref in sr_ref_list:
+            #     SR._check_obj_ref(sr_ref)
+
+            pool_ref = self.objs.keys()[0]
+            self.objs[pool_ref]['ha_enabled'] = True
+
+        def enable_local_storage_caching(self, pool_ref):
+            self._check_obj_ref_type(pool_ref)
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.enable_local_storage_caching(host_ref)
+
+        def enable_redo_log(self, sr_ref):
+            # SR._check_obj_ref_type(sr_ref)
+            # SR._check_obj_ref(sr_ref)
+            pool_ref = self.objs.keys()[0]
+            # TODO: create redo log VDI.
+            # self.objs[pool_ref]['redo_log_vdi'] = ???
+            self.objs[pool_ref]['redo_log_enabled'] = True
+
+        def enable_ssl_legacy(self, pool_ref):
+            self._check_obj_ref_type(pool_ref)
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.set_ssl_legacy(host_ref, True)
+
+        def get_license_state(self, pool_ref):
+            self._check_obj_ref_type(pool_ref)
+            self._check_obj_ref(pool_ref)
+
+            return {}
+
+        def ha_compute_hypothetical_max_host_failures_to_tolerate(self, configuration):
+            if not isinstance(configuration, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'configuration'])
+
+            return "0"
+
+        def ha_compute_max_host_failures_to_tolerate(self):
+            return "0"
+
+        def ha_compute_vm_failover_plan(self, host_ref_list, vm_ref_list):
+            # for host_ref in host_ref_list:
+            #     host._check_obj_ref_type(host_ref)
+
+            # for vm_ref in vm_ref_list:
+            #     VM._check_obj_ref_type(vm_ref)
+
+            # for host_ref in host_ref_list:
+            #     host._check_obj_ref(host_ref)
+
+            # for vm_ref in vm_ref_list:
+            #     VM._check_obj_ref(vm_ref)
+            return {}
+
+        def ha_failover_plan_exists(self, n):
+            if not isinstance(n, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'n'])
+
+            return False
+
+        def ha_prevent_restarts_for(self, seconds):
+            if not isinstance(seconds, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'seconds'])
+
+            # do nothing
+
+        def has_extension(self, pool_ref, name):
+            self._check_obj_ref_type(pool_ref)
+
+            if not isinstance(name, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'name'])
+
+            self._check_obj_ref(pool_ref)
+
+            # for host_ref in host._objs:
+            #    host.has_extension(host_ref, name)
+
+            return False
+
+        def initialize_wlb(self, wlb_url, wlb_username, wlb_password, xenserver_username, xenserver_password):
+            if not isinstance(wlb_url, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'wlb_url'])
+
+            if not isinstance(wlb_username, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'wlb_username'])
+
+            if not isinstance(wlb_password, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'wlb_password'])
+
+            if not isinstance(xenserver_username, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'xenserver_username'])
+
+            if not isinstance(xenserver_password, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'xenserver_password'])
+
+            pool_ref = self.objs.keys()[0]
+            self.objs[pool_ref]['wlb_enabled'] = True
+            self.objs[pool_ref]['wlb_url'] = wlb_url
+            self.objs[pool_ref]['wlb_username'] = wlb_username
+
+            # do nothing
+
+        def join(self, master_address, master_username, master_password):
+            if not isinstance(master_address, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'master_address'])
+
+            if not isinstance(master_username, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'master_username'])
+
+            if not isinstance(master_password, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'master_password'])
+
+            # do nothing
+
+        def join_force(self, master_address, master_username, master_password):
+            if not isinstance(master_address, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'master_address'])
+
+            if not isinstance(master_username, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'master_username'])
+
+            if not isinstance(master_password, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'master_password'])
+
+            # do nothing
+
+        def management_reconfigure(self, network_ref):
+            # network._check_obj_ref_type(network_ref)
+            # network._check_obj_ref(network_ref)
+
+            # TODO: Find pif_ref.
+
+            # for host_ref in host._objs:
+            #    host.management_reconfigure(host_ref, pif_ref)
+            pass
+
+        def recover_slaves(self):
+            return []
+
+        def retrieve_wlb_configuration(self):
+            return {}
+
+        def retrieve_wlb_recommendations(self):
+            return {}
+
+        def send_test_post(self, host, port, body):
+            if not isinstance(host, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'host'])
+
+            if not isinstance(port, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'port'])
+
+            if not isinstance(body, string_types):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'body'])
+
+            return ""
+
+        def send_wlb_configuration(self, config):
+            if not isinstance(config, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'config'])
+
+            # do nothing
+
+        def sync_database(self):
+            # do nothing
+            pass
+
+        def test_archive_target(self, pool_ref, config):
+            self._check_obj_ref_type(pool_ref)
+
+            if not isinstance(config, dict):
+                raise xenapi.xapi_exception(['FIELD_TYPE_ERROR', 'config'])
+
+            self._check_obj_ref(pool_ref)
+
+            return False
+
 
     class xapi_exception(Exception):
         """Basic class for XenAPI exception handling."""
@@ -967,6 +1715,9 @@ class xenapi(object):
         self.classes = {
             "session": self.session(root_pwd, this_host),
             "host": self.host(this_host, dom0_vm_ref),
+            "host_cpu": self.host_cpu(this_host),
+            "host_metrics": self.host_metrics(),
+            "pool": self.pool(this_host),
         }
 
         # Create and run thread that expires sessions.
