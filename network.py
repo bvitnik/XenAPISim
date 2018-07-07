@@ -55,6 +55,10 @@ class network(xenapi_object):
             "tags",
         ])
 
+        self.unimplemented_methods.extend([
+            "create_new_blob",
+        ])
+
         self.bridge_num_next = 1
 
         network_new = {
@@ -68,14 +72,14 @@ class network(xenapi_object):
             "current_operations": {},
             "default_locking_mode": "unlocked",
             "managed": True,
-            "name_description": 'Network on which guests will be assigned a private link-local IP address which can be used to talk XenAPI',
-            "name_label": 'Host internal management network',
+            "name_description": "Network on which guests will be assigned a private link-local IP address which can be used to talk XenAPI",
+            "name_label": "Host internal management network",
             "other_config": {
-                'is_guest_installer_network': 'true',
-                'netmask': '255.255.0.0',
-                'is_host_internal_management_network': 'true',
-                'ip_begin': '169.254.0.1',
-                'ip_end': '169.254.255.254'
+                "is_guest_installer_network": "true",
+                "netmask": "255.255.0.0",
+                "is_host_internal_management_network": "true",
+                "ip_begin": "169.254.0.1",
+                "ip_end": "169.254.255.254"
             },
             "purpose": [],
             "tags": [],

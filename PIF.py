@@ -153,7 +153,7 @@ class PIF(xenapi_object):
         self._check_param_type(netmask, 'string', 'netmask')
         self._check_param_type(gateway, 'string', 'gateway')
         self._check_param_type(DNS, 'string', 'DNS')
-        # self.xenapi.Bond._check_param_type(bond_slave_of_ref, 'ref', 'bond_slave_of')
+        self.xenapi.Bond._check_param_type(bond_slave_of_ref, 'ref', 'bond_slave_of')
         # self.xenapi.VLAN._check_param_type(VLAN_master_of_ref, 'ref', 'VLAN_master_of')
         self._check_param_type(management, 'boolean', 'management')
         self._check_param_type(other_config, 'struct', 'other_config')
@@ -167,7 +167,7 @@ class PIF(xenapi_object):
 
         self.xenapi.network._check_obj_ref(network_ref)
         self.xenapi.host._check_obj_ref(host_ref)
-        # self.xenapi.Bond._check_obj_ref(bond_slave_of_ref)
+        self.xenapi.Bond._check_obj_ref(bond_slave_of_ref)
         # self.xenapi.VLAN._check_obj_ref(VLAN_master_of_ref)
 
         PIF_new = {

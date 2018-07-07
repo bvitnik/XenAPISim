@@ -17,6 +17,14 @@ from pool import pool
 from network import network
 from PBD import PBD
 from PIF import PIF
+from PIF_metrics import PIF_metrics
+from Bond import Bond
+from PCI import PCI
+from SR import SR
+from task import task
+from VBD import VBD
+from VBD_metrics import VBD_metrics
+from VDI import VDI
 
 import xenapi_threads
 
@@ -50,6 +58,14 @@ class xenapi(object):
         self.network = network(self)
         self.PBD = PBD(self, this_host)
         self.PIF = PIF(self, this_host)
+        self.PIF_metrics = PIF_metrics(self)
+        self.Bond = Bond(self)
+        self.PCI = PCI(self, this_host)
+        self.SR = SR(self)
+        self.task = task(self)
+        self.VBD = VBD(self)
+        self.VBD_metrics = VBD_metrics(self)
+        self.VDI = VDI(self)
 
         # Map all XenAPI classes.
         self.classes = {
@@ -61,6 +77,14 @@ class xenapi(object):
             "network": self.network,
             "PBD": self.PBD,
             "PIF": self.PIF,
+            "PIF_metrics": self.PIF_metrics,
+            "Bond": self.Bond,
+            "PCI": self.PCI,
+            "SR": self.SR,
+            "task": self.task,
+            "VBD": self.VBD,
+            "VBD_metrics": self.VBD_metrics,
+            "VDI": self.VDI,
         }
 
         # Create and run thread that expires sessions.
