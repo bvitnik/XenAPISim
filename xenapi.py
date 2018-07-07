@@ -16,6 +16,7 @@ from host_metrics import host_metrics
 from pool import pool
 from network import network
 from PBD import PBD
+from PIF import PIF
 
 import xenapi_threads
 
@@ -48,6 +49,7 @@ class xenapi(object):
         self.pool = pool(self, this_host)
         self.network = network(self)
         self.PBD = PBD(self, this_host)
+        self.PIF = PIF(self, this_host)
 
         # Map all XenAPI classes.
         self.classes = {
@@ -58,6 +60,7 @@ class xenapi(object):
             "pool": self.pool,
             "network": self.network,
             "PBD": self.PBD,
+            "PIF": self.PIF,
         }
 
         # Create and run thread that expires sessions.

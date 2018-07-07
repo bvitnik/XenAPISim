@@ -32,6 +32,14 @@ class PBD(xenapi_object):
             "host": "OpaqueRef:NULL",
         })
 
+        self.rw_fields.extend([
+            "device_config",
+        ])
+
+        self.map_fields.extend([
+            "device_config",
+        ])
+
         PBD_new = {
             "SR": "OpaqueRef:%s" % str(uuid.uuid4()),
             "currently_attached": True,

@@ -44,6 +44,7 @@ class network(xenapi_object):
 
         self.rw_fields.extend([
             "MTU",
+            "default_locking_mode",
             "name_description",
             "name_label",
             "tags",
