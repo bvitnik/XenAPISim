@@ -6,7 +6,7 @@
 
 from __future__ import print_function
 
-import uuid, time
+import uuid
 from datetime import datetime
 from six import string_types
 
@@ -90,7 +90,7 @@ class pool(xenapi_object):
             "health_check_config",
         ])
 
-        self.unimplemented_methods = [
+        self.unimplemented_methods.extend([
             "apply_edition",
             "certificate_install",
             "certificate_list",
@@ -133,7 +133,7 @@ class pool(xenapi_object):
             "send_wlb_configuration",
             "sync_database",
             "test_archive_target",
-        ]
+        ])
 
         pool_new = {
             "allowed_operations": ['ha_enable'],
@@ -179,7 +179,7 @@ class pool(xenapi_object):
         self.objs[pool_ref] = pool_new
 
     def designate_new_master(self, host_ref):
-        self.xenapi.host._check_obj_ref_type(network_ref)
+        self.xenapi.host._check_param_type(network_ref, 'ref')
         self.xenapi.host._check_obj_ref(network_ref)
 
         pool_ref = self.objs.keys()[0]
@@ -189,7 +189,7 @@ class pool(xenapi_object):
         self.xenapi.host.destroy(host_ref)
 
     def get_license_state(self, pool_ref):
-        self._check_obj_ref_type(pool_ref)
+        self._check_param_type(pool_ref, 'ref')
         self._check_obj_ref(pool_ref)
 
         return {'edition': 'enterprise-per-socket', 'expiry': 'never'}

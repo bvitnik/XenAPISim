@@ -24,16 +24,16 @@ class host_cpu(xenapi_object):
         super(host_cpu, self).__init__(xenapi)
 
         self.field_def.update({
-            "family": "",
+            "family": "0",
             "features": "",
             "flags": "",
             "host": "OpaqueRef:NULL",
-            "model": "",
+            "model": "0",
             "modelname": "",
-            "number": "",
-            "speed": "",
+            "number": "0",
+            "speed": "0",
             "stepping": "",
-            "utilisation": "",
+            "utilisation": 0.0,
             "vendor": "",
         })
 
@@ -49,7 +49,7 @@ class host_cpu(xenapi_object):
             "speed": "0",
             "stepping": "",
             "uuid": str(uuid.uuid4()),
-            "utilisation": "0.0",
+            "utilisation": 0.0,
             "vendor": "",
         }
 

@@ -8,7 +8,6 @@ from __future__ import print_function
 
 import uuid, time
 from datetime import datetime
-from six import string_types
 
 from xenapi_object import xenapi_object
 from xenapi_exception import xenapi_exception
@@ -28,8 +27,8 @@ class host(xenapi_object):
         super(host, self).__init__(xenapi)
 
         self.field_def.update({
-            "API_version_major": "",
-            "API_version_minor": "",
+            "API_version_major": "0",
+            "API_version_minor": "0",
             "API_version_vendor": "",
             "API_version_vendor_implementation": {},
             "PBDs": [],
@@ -66,7 +65,7 @@ class host(xenapi_object):
             "license_server": {},
             "local_cache_sr": "OpaqueRef:NULL",
             "logging": {},
-            "memory_overhead": "",
+            "memory_overhead": "0",
             "metrics": "OpaqueRef:NULL",
             "multipathing": False,
             "name_description": "",
@@ -110,7 +109,7 @@ class host(xenapi_object):
             "logging",
         ])
 
-        self.unimplemented_methods = [
+        self.unimplemented_methods.extend([
             "apply_edition",
             "assert_can_evacuate",
             "backup_rrds",
@@ -158,7 +157,7 @@ class host(xenapi_object):
             "shutdown_agent",
             "sync_data",
             "syslog_reconfigure",
-        ]
+        ])
 
         host_new = {
             "API_version_major": "2",
@@ -228,37 +227,37 @@ class host(xenapi_object):
     #
 
     def compute_free_memory(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         return "0"
 
     def compute_memory_overhead(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         return "0"
 
     def destroy(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         del self.objs[host_ref]
 
     def disable(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         self.objs[host_ref]['enabled'] = False
 
     def enable(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         self.objs[host_ref]['enabled'] = True
 
     def get_management_interface(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         obj = self.objs[host_ref]
@@ -267,19 +266,19 @@ class host(xenapi_object):
             return obj['PIFs'][0]
 
     def get_server_localtime(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         return datetime.now()
 
     def get_servertime(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         return datetime.utcnow()
 
     def get_system_status_capabilities(self, host_ref):
-        self._check_obj_ref_type(host_ref)
+        self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
         return ""

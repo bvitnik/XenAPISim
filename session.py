@@ -8,7 +8,6 @@ from __future__ import print_function
 
 import uuid
 from datetime import datetime
-from six import string_types
 
 from xenapi_object import xenapi_object
 from xenapi_exception import xenapi_exception
@@ -84,11 +83,8 @@ class session(xenapi_object):
     def change_password(self, old_pwd, new_pwd):
         # old_pwd is just ignored because root account is always used.
 
-        if not isinstance(old_pwd, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'old_pwd'])
-
-        if not isinstance(new_pwd, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'new_pwd'])
+        self._check_param_type(old_pwd, 'string', 'old_pwd')
+        self._check_param_type(new_pwd, 'string', 'new_pwd')
 
         if not new_pwd:
             raise xenapi_exception(['CHANGE_PASSWORD_REJECTED', 'Authentication information cannot be recovered'])
@@ -99,8 +95,7 @@ class session(xenapi_object):
         # I don't really know what this method does. It's not well
         # documentented. I implemented this as a stub that returns first
         # session found.
-        if not isinstance(filename, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'filename'])
+        self._check_param_type(filename, 'string', 'filename')
 
         if self.objs:
             return self.objs.keys()[0]
@@ -115,17 +110,10 @@ class session(xenapi_object):
         self.logout(session_ref)
 
     def login_with_password(self, user_name, user_pwd, version="1.0", originator=""):
-        if not isinstance(user_name, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'uname'])
-
-        if not isinstance(user_pwd, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'pwd'])
-
-        if not isinstance(version, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'version'])
-
-        if not isinstance(originator, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'originator'])
+        self._check_param_type(user_name, 'string', 'user_name')
+        self._check_param_type(user_pwd, 'string', 'user_pwd')
+        self._check_param_type(version, 'string', 'version')
+        self._check_param_type(originator, 'string', 'originator')
 
         # Check user name and password.
         if user_name != "root" or user_pwd != self.root_pwd:

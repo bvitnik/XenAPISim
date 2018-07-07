@@ -67,7 +67,7 @@ class xenapi_object(object):
             Returns:
                 varying type: XenAPI object field value.
             """
-            self._check_obj_ref_type(obj_ref)
+            self._check_param_type(obj_ref, 'ref')
 
             field_name = method_name[4:]
 
@@ -87,11 +87,12 @@ class xenapi_object(object):
             Raises:
                 xenapi_exception: If value type differs from field type.
             """
-            self._check_obj_ref_type(obj_ref)
+            self._check_param_type(obj_ref, 'ref')
 
             field_name = method_name[4:]
 
-            if type(self.field_def[field_name]) != type(value):
+            if (type(self.field_def[field_name]) != type(value) or
+                isinstance(self.field_def[field_name], string_types) and self.field_def[field_name].isdigit() and not value.isdigit()):
                 raise xenapi_exception(['FIELD_TYPE_ERROR', 'value'])
 
             self._check_obj_ref(obj_ref)
@@ -108,12 +109,11 @@ class xenapi_object(object):
             Args:
                 value (str) Value to add.
             """
-            self._check_obj_ref_type(obj_ref)
+            self._check_param_type(obj_ref, 'ref')
 
             field_name = method_name[4:]
 
-            if not isinstance(value, string_types):
-                raise xenapi_exception(['FIELD_TYPE_ERROR', 'value'])
+            self._check_param_type(value, 'string', 'value')
 
             self._check_obj_ref(obj_ref)
 
@@ -130,12 +130,11 @@ class xenapi_object(object):
             Args:
                 value (str) Value to remove.
             """
-            self._check_obj_ref_type(obj_ref)
+            self._check_param_type(obj_ref, 'ref')
 
             field_name = method_name[7:]
 
-            if not isinstance(value, string_types):
-                raise xenapi_exception(['FIELD_TYPE_ERROR', 'value'])
+            self._check_param_type(value, 'string', 'value')
 
             self._check_obj_ref(obj_ref)
 
@@ -157,15 +156,12 @@ class xenapi_object(object):
                 xenapi_exception: If key or value is not string or if key already
                 exists in map type field.
             """
-            self._check_obj_ref_type(obj_ref)
+            self._check_param_type(obj_ref, 'ref')
 
             field_name = method_name[7:]
 
-            if not isinstance(key, string_types):
-                raise xenapi_exception(['FIELD_TYPE_ERROR', 'key'])
-
-            if not isinstance(value, string_types):
-                raise xenapi_exception(['FIELD_TYPE_ERROR', 'value'])
+            self._check_param_type(key, 'string', 'key')
+            self._check_param_type(value, 'string', 'value')
 
             self._check_obj_ref(obj_ref)
 
@@ -187,12 +183,11 @@ class xenapi_object(object):
             Raises:
                 xenapi_exception: If key or value is not string.
             """
-            self._check_obj_ref_type(obj_ref)
+            self._check_param_type(obj_ref, 'ref')
 
             field_name = method_name[12:]
 
-            if not isinstance(key, string_types):
-                raise xenapi_exception(['FIELD_TYPE_ERROR', 'key'])
+            self._check_param_type(key, 'string', 'key')
 
             self._check_obj_ref(obj_ref)
 
@@ -222,17 +217,30 @@ class xenapi_object(object):
     # Common utility methods
     #
 
-    def _check_obj_ref_type(self, obj_ref):
-        """Checks if object reference is of string type.
+    def _check_param_type(self, param, param_type, param_name=""):
+        """Checks if param is of certain XML-RPC type.
 
         Args:
-            obj_ref (str): XenAPI object reference to check.
+            param: parameter to check.
+            param_name (str): parameter name (used for error messages).
+            param_type (str): parameter type, one of: "double", "boolean",
+                "datetime", "string", "array" or "struct" to check against.
 
         Raises:
-            xenapi_exception: If object reference is not valid type.
+            xenapi_exception: If param is not of required type.
         """
-        if not isinstance(obj_ref, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', self.__class__.__name__])
+        if not param_name:
+            param_name = self.__class__.__name__
+
+        if (param_type == "int" and not (isinstance(param, string_types) and param.isdigit()) or
+                param_type == "double" and not isinstance(param, float) or
+                param_type == "boolean" and not isinstance(param, bool) or
+                param_type == "datetime" and not isinstance(param, datetime) or
+                param_type == "string" and not isinstance(param, string_types) or
+                param_type == "array" and not isinstance(param, list) or
+                param_type == "struct" and not isinstance(param, dict) or
+                param_type == "ref" and not isinstance(param, string_types)):
+            raise xenapi_exception(['FIELD_TYPE_ERROR', param_name])
 
     def _check_obj_ref(self, obj_ref):
         """Checks if object reference is valid/exists.
@@ -273,8 +281,7 @@ class xenapi_object(object):
         return self.objs
 
     def get_by_name_label(self, label):
-        if not isinstance(label, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'label'])
+        self._check_param_type(label, 'string', 'label')
 
         obj_refs_found = []
 
@@ -286,8 +293,7 @@ class xenapi_object(object):
         return obj_refs_found
 
     def get_by_uuid(self, uuid):
-        if not isinstance(uuid, string_types):
-            raise xenapi_exception(['FIELD_TYPE_ERROR', 'uuid'])
+        self._check_param_type(uuid, 'string', 'uuid')
 
         obj_ref_found = None
 
@@ -302,7 +308,7 @@ class xenapi_object(object):
             raise xenapi_exception(['UUID_INVALID', self.__class__.__name__, uuid])
 
     def get_record(self, obj_ref):
-        self._check_obj_ref_type(obj_ref)
+        self._check_param_type(obj_ref, 'ref')
         self._check_obj_ref(obj_ref)
 
         return self.objs[obj_ref]
