@@ -16,7 +16,7 @@ class role(xenapi_object):
     Attributes:
     """
 
-    def __init__(self, xenapi, host_ref):
+    def __init__(self, xenapi):
         """Inits role class.
 
         Args:
@@ -27,7 +27,6 @@ class role(xenapi_object):
             "name_description": "",
             "name_label": "",
             "subroles": "OpaqueRef:NULL",
-            "uuid": ,
         })
 
         # role_new = {
