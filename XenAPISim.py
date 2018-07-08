@@ -6,6 +6,7 @@
 
 from __future__ import print_function
 
+from six.moves.socketserver import ThreadingMixIn
 from six.moves.xmlrpc_server import SimpleXMLRPCServer
 
 from xenapi import xenapi
@@ -13,8 +14,11 @@ from xenapi import xenapi
 bind_address = ""
 bind_port = 8080
 
-# Use SimpleXMLRPCServer to serve XenAPI.
-xapi_server = SimpleXMLRPCServer((bind_address, bind_port))
+class ThreadedSimpleXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):
+    pass
+
+# Use ThreadedSimpleXMLRPCServer to serve XenAPI.
+xapi_server = ThreadedSimpleXMLRPCServer((bind_address, bind_port))
 xapi_server.register_instance(xenapi())
 xapi_server.register_introspection_functions()
 xapi_server.serve_forever()

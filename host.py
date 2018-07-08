@@ -230,6 +230,8 @@ class host(xenapi_object):
         self._check_param_type(host_ref, 'ref')
         self._check_obj_ref(host_ref)
 
+        time.sleep(20)
+
         return "0"
 
     def compute_memory_overhead(self, host_ref):
