@@ -25,6 +25,13 @@ from task import task
 from VBD import VBD
 from VBD_metrics import VBD_metrics
 from VDI import VDI
+from VIF import VIF
+from VIF_metrics import VIF_metrics
+from VLAN import VLAN
+from VM import VM
+from VM_appliance import VM_appliance
+from VM_guest_metrics import VM_guest_metrics
+from VM_metrics import VM_metrics
 
 import xenapi_threads
 
@@ -66,6 +73,13 @@ class xenapi(object):
         self.VBD = VBD(self)
         self.VBD_metrics = VBD_metrics(self)
         self.VDI = VDI(self)
+        self.VIF = VIF(self)
+        self.VIF_metrics = VIF_metrics(self)
+        self.VLAN = VLAN(self)
+        self.VM = VM(self)
+        self.VM_appliance = VM_appliance(self)
+        self.VM_guest_metrics = VM_guest_metrics(self)
+        self.VM_metrics = VM_metrics(self)
 
         # Map all XenAPI classes.
         self.classes = {
@@ -85,6 +99,13 @@ class xenapi(object):
             "VBD": self.VBD,
             "VBD_metrics": self.VBD_metrics,
             "VDI": self.VDI,
+            "VIF": self.VIF,
+            "VIF_metrics": self.VIF_metrics,
+            "VLAN": self.VLAN,
+            "VM": self.VM,
+            "VM_appliance": self.VM_appliance,
+            "VM_guest_metrics": self.VM_guest_metrics,
+            "VM_metrics": self.VM_metrics,
         }
 
         # Create and run thread that expires sessions.
@@ -132,13 +153,6 @@ class xenapi(object):
                 method_argcount -= 1
             except AttributeError:
                 pass
-
-            #if (not method_name_split[1].startswith("get_") and
-            #        not method_name_split[1].startswith("set_") and
-            #        not method_name_split[1].startswith("add_") and
-            #        not method_name_split[1].startswith("remove_") or
-            #        method_name_split[1] in ["get_all", "get_all_records", "get_all_subject_identifiers", "get_by_name_label", "get_by_uuid", "get_record"]):
-            #    method_argcount -= 1
 
             # All methods except login methods have implicit session ref
             # parameter so real number of parameters is one less.
