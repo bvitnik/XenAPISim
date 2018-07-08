@@ -10,7 +10,7 @@ from six.moves.xmlrpc_server import SimpleXMLRPCServer
 
 from xenapi import xenapi
 
-bind_address = "localhost"
+bind_address = ""
 bind_port = 8080
 
 # Use SimpleXMLRPCServer to serve XenAPI.

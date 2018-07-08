@@ -32,6 +32,7 @@ from VM import VM
 from VM_appliance import VM_appliance
 from VM_guest_metrics import VM_guest_metrics
 from VM_metrics import VM_metrics
+from role import role
 
 import xenapi_threads
 
@@ -80,6 +81,7 @@ class xenapi(object):
         self.VM_appliance = VM_appliance(self)
         self.VM_guest_metrics = VM_guest_metrics(self)
         self.VM_metrics = VM_metrics(self)
+        self.role = role(self)
 
         # Map all XenAPI classes.
         self.classes = {
@@ -106,6 +108,7 @@ class xenapi(object):
             "VM_appliance": self.VM_appliance,
             "VM_guest_metrics": self.VM_guest_metrics,
             "VM_metrics": self.VM_metrics,
+            "role": self.role,
         }
 
         # Create and run thread that expires sessions.

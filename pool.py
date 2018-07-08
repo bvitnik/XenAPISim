@@ -7,8 +7,6 @@
 from __future__ import print_function
 
 import uuid
-from datetime import datetime
-from six import string_types
 
 from xenapi_object import xenapi_object
 from xenapi_exception import xenapi_exception
